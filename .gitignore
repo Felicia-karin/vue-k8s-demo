@@ -1,0 +1,15 @@
+# Node
+node_modules/
+npm-debug.log
+
+# Vue build output
+dist/
+
+# Docker
+*.tar
+
+# Mac
+.DS_Store
+
+# Environment
+.env
