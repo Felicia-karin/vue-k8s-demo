@@ -25,7 +25,7 @@ onMounted(loadWelcome)
 
 <template>
   <div class="container">
-    <h1>🚀 Auto-Deployed by Jenkins!</h1>
+    <h1>🔥 AUTOMATED DEPLOYMENT IS LIVE! 🔥</h1>
 
     <div v-if="error" class="card error">
       <p>❌ {{ message }}</p>
