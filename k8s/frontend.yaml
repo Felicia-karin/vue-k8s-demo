@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: crosslifedocker/vue-frontend:v2
+        image: crosslifedocker/vue-frontend:17
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
@@ -33,5 +33,4 @@ spec:
   ports:
   - port: 80
     targetPort: 80
-    nodePort: 30001                   # ← browser access: http://localhost:30001
-  type: NodePort
+  type: ClusterIP
