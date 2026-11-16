@@ -34,7 +34,7 @@ onMounted(loadData)
 
 <template>
   <div class="container">
-    <h1>🔥 AUTOMATED DEPLOYMENT IS LIVE!(GitOps) 🔥</h1>
+    <h1>🚀 GITOPS IS THE FUTURE! 🚀</h1>
 
     <div v-if="error" class="card error">
       <p>❌ {{ message }}</p>
