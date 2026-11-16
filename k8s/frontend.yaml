@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: crosslifedocker/vue-frontend:17
+        image: crosslifedocker/vue-frontend:19
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80

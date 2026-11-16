@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: crosslifedocker/node-backend:17
+        image: crosslifedocker/node-backend:19
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
