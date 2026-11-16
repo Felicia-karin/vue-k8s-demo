@@ -40,6 +40,8 @@ spec:
             secretKeyRef:
               name: postgres-secret
               key: POSTGRES_DB
+        - name: REDIS_HOST
+          value: "redis-service"
 ---
 apiVersion: v1
 kind: Service

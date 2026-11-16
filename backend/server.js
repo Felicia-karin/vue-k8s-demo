@@ -1,14 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const { createClient } = require('redis');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json());
-
-// PostgreSQL Connection Pool
+// PostgreSQL Connection
 const pool = new Pool({
   host: process.env.DB_HOST || 'postgres-service',
   user: process.env.DB_USER || 'admin',
@@ -17,10 +15,24 @@ const pool = new Pool({
   port: 5432,
 });
 
-// Health check
+// Redis Connection
+const redisClient = createClient({
+  url: `redis://${process.env.REDIS_HOST || 'redis-service'}:6379`
+});
+
+redisClient.on('error', (err) => console.log('Redis Client Error', err));
+
+// Connect to Redis when the app starts
+(async () => {
+  await redisClient.connect();
+  console.log('✅ Connected to Redis');
+})();
+
+app.use(cors());
+app.use(express.json());
+
 app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 
-// Existing welcome endpoint
 app.get('/api/welcome', (req, res) => {
   res.json({
     message: 'Welcome from Node.js Backend! 🚀',
@@ -29,17 +41,29 @@ app.get('/api/welcome', (req, res) => {
   });
 });
 
-// NEW: Get all users from PostgreSQL
 app.get('/api/users', async (req, res) => {
   try {
+    // 1. Check Redis Cache first
+    const cachedUsers = await redisClient.get('users_list');
+    
+    if (cachedUsers) {
+      console.log('⚡ Serving from Redis Cache');
+      return res.json(JSON.parse(cachedUsers));
+    }
+
+    // 2. Cache Miss - Query PostgreSQL
+    console.log('🐘 Querying PostgreSQL...');
     const result = await pool.query('SELECT name, email, username, is_active FROM users');
-    // Map database columns to frontend-friendly keys
     const users = result.rows.map(row => ({
       name: row.name,
       email: row.email,
       username: row.username,
       isActive: row.is_active
     }));
+
+    // 3. Save to Redis for next time (expire in 60 seconds)
+    await redisClient.setEx('users_list', 60, JSON.stringify(users));
+
     res.json(users);
   } catch (err) {
     console.error('Database error:', err);
